@@ -36,10 +36,6 @@ ignore = []
 # -----------------------------------------------------------------------------
 # Ensure all dependencies use permissive, compatible licenses.
 [licenses]
-# Deny unlicensed crates
-unlicensed = "deny"
-# Copyleft licenses are denied by default unless explicitly allowed
-copyleft = "deny"
 # Allow-list of permissive licenses compatible with any project license
 allow = [
     # Permissive licenses
