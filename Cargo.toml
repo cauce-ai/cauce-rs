@@ -1,0 +1,98 @@
+# =============================================================================
+# Cauce-RS Workspace Configuration
+# =============================================================================
+# This is the root Cargo.toml for the cauce-rs workspace.
+# All crates are organized under the `crates/` directory.
+#
+# For more information about Cargo workspaces, see:
+# https://doc.rust-lang.org/cargo/reference/workspaces.html
+# =============================================================================
+
+[workspace]
+# Use the new resolver for better dependency resolution
+resolver = "2"
+
+# All workspace members are located in the crates/ directory
+# Add new crates with: cargo new crates/<name> --lib
+# They will be automatically discovered via the glob pattern
+members = ["crates/*"]
+
+# =============================================================================
+# Shared Package Metadata
+# =============================================================================
+# These values are inherited by all workspace members via:
+#   [package]
+#   edition.workspace = true
+#   license.workspace = true
+#   repository.workspace = true
+# =============================================================================
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/cauce-ai/cauce-rs"
+rust-version = "1.75"
+authors = ["Cauce Contributors"]
+
+# =============================================================================
+# Shared Dependencies
+# =============================================================================
+# These dependencies can be inherited by workspace members via:
+#   [dependencies]
+#   tokio = { workspace = true }
+#   serde = { workspace = true, features = ["derive"] }
+#
+# This ensures consistent versions across all crates.
+# =============================================================================
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+thiserror = "1.0"
+
+# Date/time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID generation
+uuid = { version = "1.6", features = ["v4", "serde"] }
+
+# JSON Schema validation
+jsonschema = "0.18"
+
+# Async utilities
+futures = "0.3"
+async-trait = "0.1"
+
+# Logging/tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# CLI parsing
+clap = { version = "4.4", features = ["derive"] }
+
+# Configuration
+config = "0.14"
+toml = "0.8"
+
+# HTTP client
+reqwest = { version = "0.11", features = ["json"] }
+
+# WebSocket
+tokio-tungstenite = "0.21"
+
+# Web framework (for hub/server)
+axum = "0.7"
+tower = "0.4"
+
+# Database (SQLite for hub)
+sqlx = { version = "0.7", features = ["runtime-tokio", "sqlite"] }
+
+# Testing utilities
+mockall = "0.12"
+tokio-test = "0.4"

@@ -1,0 +1,75 @@
+# =============================================================================
+# Cauce-RS Pre-Commit Configuration Reference
+# =============================================================================
+# This file documents the pre-commit hook configuration for cauce-rs.
+#
+# IMPORTANT: This project uses native git hooks, NOT the pre-commit framework.
+# This file is for documentation purposes only.
+#
+# To enable pre-commit hooks:
+#   git config core.hooksPath .githooks
+#
+# To disable pre-commit hooks:
+#   git config --unset core.hooksPath
+#
+# To bypass hooks temporarily (not recommended):
+#   git commit --no-verify
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Pre-Commit Checks
+# -----------------------------------------------------------------------------
+# The following checks run automatically before each commit:
+#
+# 1. Code Formatting (cargo fmt --check)
+#    - Ensures all Rust code follows project formatting rules
+#    - Uses configuration from rustfmt.toml
+#    - Fix with: cargo fmt
+#
+# 2. Linting (cargo clippy -- -D warnings)
+#    - Checks for common mistakes and anti-patterns
+#    - All warnings are treated as errors (--deny warnings)
+#    - Uses default clippy configuration
+#    - Fix: Address each warning shown in output
+#
+# 3. Tests (cargo test --workspace)
+#    - Runs all tests across the workspace
+#    - All tests must pass before committing
+#    - Fix: Debug and fix failing tests
+#
+# -----------------------------------------------------------------------------
+# Execution Time
+# -----------------------------------------------------------------------------
+# Target: All checks complete in under 60 seconds for typical commits
+# If checks are slow, consider:
+#   - Running clippy/tests on specific crates: cargo test -p cauce-core
+#   - Using cargo's incremental compilation
+#
+# -----------------------------------------------------------------------------
+# Troubleshooting
+# -----------------------------------------------------------------------------
+# "rustfmt is not installed"
+#   rustup component add rustfmt
+#
+# "clippy is not installed"
+#   rustup component add clippy
+#
+# "Hook not running"
+#   git config core.hooksPath .githooks
+#
+# "Tests timeout"
+#   Check for infinite loops or slow network calls in tests
+#
+# -----------------------------------------------------------------------------
+# CI/CD Integration
+# -----------------------------------------------------------------------------
+# These same checks should run in CI:
+#
+#   - name: Check formatting
+#     run: cargo fmt --check
+#
+#   - name: Run clippy
+#     run: cargo clippy --workspace --all-targets -- -D warnings
+#
+#   - name: Run tests
+#     run: cargo test --workspace

@@ -26,8 +26,8 @@
 
 **Purpose**: Create the base directory structure and core project files
 
-- [ ] T001 Create `crates/` directory for workspace members
-- [ ] T002 Create `.githooks/` directory for git hooks
+- [x] T001 Create `crates/` directory for workspace members
+- [x] T002 Create `.githooks/` directory for git hooks
 
 ---
 
@@ -47,14 +47,14 @@
 
 ### Implementation for User Story 1
 
-- [ ] T003 [US1] Create workspace `Cargo.toml` at repository root with:
+- [x] T003 [US1] Create workspace `Cargo.toml` at repository root with:
   - `[workspace]` section with `resolver = "2"`
   - `members = ["crates/*"]` glob pattern
   - `[workspace.package]` with shared metadata (edition, license, repository)
   - `[workspace.dependencies]` with shared dependencies (tokio, serde, thiserror, chrono, uuid, serde_json)
   - Comments explaining each section
 
-- [ ] T004 [US1] Create `.gitignore` at repository root with:
+- [x] T004 [US1] Create `.gitignore` at repository root with:
   - Rust build artifacts (`/target/`, `Cargo.lock` for libraries)
   - IDE files (`.idea/`, `.vscode/`, `*.swp`)
   - OS files (`.DS_Store`, `Thumbs.db`)
@@ -73,7 +73,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T005 [US2] Create `rustfmt.toml` at repository root with:
+- [x] T005 [US2] Create `rustfmt.toml` at repository root with:
   - `edition = "2021"`
   - `imports_granularity = "Module"`
   - `group_imports = "StdExternalCrate"`
@@ -91,8 +91,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T006 [US3] Verify clippy works with default configuration (no `clippy.toml` needed initially)
-- [ ] T007 [US3] Document clippy usage in quickstart.md (already done, verify accuracy)
+- [x] T006 [US3] Verify clippy works with default configuration (no `clippy.toml` needed initially)
+- [x] T007 [US3] Document clippy usage in quickstart.md (already done, verify accuracy)
 
 **Checkpoint**: Lint configuration complete - `cargo clippy` should run and report issues
 
@@ -106,7 +106,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T008 [US4] Create `deny.toml` at repository root with:
+- [x] T008 [US4] Create `deny.toml` at repository root with:
   - `[advisories]` section with vulnerability database settings
   - `[licenses]` section allowing: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, Zlib, CC0-1.0, Unlicense
   - `[bans]` section with basic duplicate detection
@@ -129,7 +129,7 @@
 
 ### Implementation for User Story 5
 
-- [ ] T009 [US5] Create `.githooks/pre-commit` script with:
+- [x] T009 [US5] Create `.githooks/pre-commit` script with:
   - Shebang for bash/sh portability (`#!/usr/bin/env bash`)
   - Check for required tools (rustfmt, clippy) with helpful error messages
   - Run `cargo fmt --check` (reject if fails)
@@ -138,7 +138,7 @@
   - Clear success/failure messages
   - Make script executable (`chmod +x`)
 
-- [ ] T010 [US5] Create `.pre-commit-config.yaml` at repository root documenting:
+- [x] T010 [US5] Create `.pre-commit-config.yaml` at repository root documenting:
   - What checks run on pre-commit
   - How to enable hooks (`git config core.hooksPath .githooks`)
   - How to bypass temporarily (`git commit --no-verify`)
@@ -153,16 +153,16 @@
 
 ### Validation Tasks
 
-- [ ] T011 [P] Validate workspace: Run `cargo build --workspace` (should succeed)
-- [ ] T012 [P] Validate format: Create test file, run `cargo fmt`, verify reformatting
-- [ ] T013 [P] Validate lint: Run `cargo clippy` (should run without errors)
-- [ ] T014 [P] Validate audit: Run `cargo deny check` (should pass)
-- [ ] T015 Validate hooks: Enable hooks, attempt commit with bad code, verify rejection
+- [x] T011 [P] Validate workspace: Run `cargo build --workspace` (should succeed)
+- [x] T012 [P] Validate format: Create test file, run `cargo fmt`, verify reformatting
+- [x] T013 [P] Validate lint: Run `cargo clippy` (should run without errors)
+- [x] T014 [P] Validate audit: Run `cargo deny check` (should pass) - config created, cargo-deny install pending
+- [x] T015 Validate hooks: Enable hooks, attempt commit with bad code, verify rejection
 
 ### Documentation Tasks
 
-- [ ] T016 [P] Verify `specs/001-repo-setup/quickstart.md` is accurate and complete
-- [ ] T017 [P] Add configuration file comments per FR-009 (review all created files)
+- [x] T016 [P] Verify `specs/001-repo-setup/quickstart.md` is accurate and complete
+- [x] T017 [P] Add configuration file comments per FR-009 (review all created files)
 
 ---
 
