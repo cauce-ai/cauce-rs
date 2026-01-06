@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-01-06
 
 ## Active Technologies
+- YAML (GitHub Actions workflow syntax), Rust 1.75+ (target of CI) + GitHub Actions, cargo, rustfmt, clippy, cargo-deny, cargo-tarpaulin/llvm-cov (002-ci-cd-pipeline)
+- N/A - Configuration files only (002-ci-cd-pipeline)
 
 - Rust stable (1.75+) + None (configuration files only; tools are external) (001-repo-setup)
 
@@ -22,8 +24,21 @@ cargo test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECH
 Rust stable (1.75+): Follow standard conventions
 
 ## Recent Changes
+- 002-ci-cd-pipeline: Added YAML (GitHub Actions workflow syntax), Rust 1.75+ (target of CI) + GitHub Actions, cargo, rustfmt, clippy, cargo-deny, cargo-tarpaulin/llvm-cov
 
 - 001-repo-setup: Added Rust stable (1.75+) + None (configuration files only; tools are external)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
+
+## Protocol Principles
+
+**Cauce Protocol**: Constitution v1.1.0
+
+Key development requirements:
+- **TDD Required**: Tests before code, 95% coverage (Principle XI)
+- **Spec-First**: Behavior defined in spec before implementation (Principle I)
+- **Schema-Driven**: JSON Schemas for all protocol messages (Principle II)
+- **Component Separation**: Adapter/Hub/Agent boundaries (Principle VI)
+
+Full constitution: `.specify/memory/constitution.md`

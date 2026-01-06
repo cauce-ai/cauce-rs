@@ -1,0 +1,180 @@
+# =============================================================================
+# Cauce-RS Continuous Integration Workflow
+# =============================================================================
+# This workflow runs on every push and pull request to ensure code quality.
+#
+# Jobs:
+#   - format: Check code formatting with rustfmt
+#   - lint: Run clippy linter with warnings as errors
+#   - audit: Check dependencies for security vulnerabilities and license compliance
+#   - build: Build the workspace on all platforms
+#   - test: Run tests on all platforms
+#   - coverage: Generate and enforce 95% code coverage threshold
+#
+# For more information, see: specs/002-ci-cd-pipeline/quickstart.md
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main, master]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Format Check
+  # ---------------------------------------------------------------------------
+  # Verifies all Rust code follows project formatting standards.
+  # This job runs first and fast-fails to save CI resources.
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo fmt --all --check
+
+  # ---------------------------------------------------------------------------
+  # Lint Check
+  # ---------------------------------------------------------------------------
+  # Runs clippy with all warnings treated as errors.
+  # Catches common mistakes and enforces best practices.
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache cargo dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+  # ---------------------------------------------------------------------------
+  # Build
+  # ---------------------------------------------------------------------------
+  # Builds the workspace on all supported platforms.
+  # Depends on format and lint passing to save resources on bad code.
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: [format, lint]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+
+      - name: Build workspace
+        run: cargo build --workspace --all-targets
+
+  # ---------------------------------------------------------------------------
+  # Test
+  # ---------------------------------------------------------------------------
+  # Runs all tests on all supported platforms.
+  # Depends on build passing.
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+
+      - name: Run tests
+        run: cargo test --workspace --all-targets
+
+  # ---------------------------------------------------------------------------
+  # Dependency Audit
+  # ---------------------------------------------------------------------------
+  # Checks dependencies for security vulnerabilities and license compliance.
+  # Runs in parallel with format/lint for fast feedback.
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install cargo-deny
+        uses: taiki-e/install-action@cargo-deny
+
+      - name: Run cargo-deny
+        run: cargo deny check
+
+  # ---------------------------------------------------------------------------
+  # Coverage
+  # ---------------------------------------------------------------------------
+  # Generates code coverage report and enforces 95% threshold.
+  # Per Constitution Principle XI, 95% coverage is mandatory.
+  # Runs only on Linux after all tests pass.
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Cache cargo dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Generate coverage report
+        run: cargo llvm-cov --workspace --lcov --output-path lcov.info --fail-under 95
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: lcov.info
+          retention-days: 30
