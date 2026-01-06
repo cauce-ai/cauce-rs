@@ -13,10 +13,14 @@
 
   Templates status:
   - .specify/templates/plan-template.md: ✅ Updated (added coverage tool, threshold, constitution check table)
-  - .specify/templates/spec-template.md: ✅ Compatible (FR/SC structure aligns)
+  - .specify/templates/spec-template.md: ✅ Updated (added TDD Approach section with Principle XI reference)
   - .specify/templates/tasks-template.md: ✅ Updated (tests now REQUIRED, added coverage verification)
   - .specify/templates/checklist-template.md: ✅ Compatible (generic)
-  - .specify/templates/agent-file-template.md: ✅ Compatible (generic)
+  - .specify/templates/agent-file-template.md: ✅ Updated (added Protocol Principles section)
+
+  Scripts status:
+  - .specify/scripts/bash/check-prerequisites.sh: ✅ Updated (added --validate-constitution and --validate-coverage flags)
+  - .specify/scripts/bash/update-agent-context.sh: ✅ Updated (added constitution awareness and Protocol Principles generation)
 
   Follow-up TODOs: None
 -->

@@ -114,6 +114,35 @@
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
 
+## Test-Driven Development Approach *(mandatory)*
+
+<!--
+  Per Constitution Principle XI: Test-Driven Development
+  All implementations MUST follow TDD with 95% code coverage.
+  This section defines the testing strategy for this feature.
+-->
+
+### Testing Strategy
+
+- **Unit Tests**: [Describe key units to test - functions, modules, types]
+- **Integration Tests**: [Describe cross-module interactions to verify]
+- **Contract Tests**: [Describe schema validation and protocol compliance tests]
+
+### Coverage Requirement
+
+Per Constitution Principle XI, this feature MUST:
+- Have tests written BEFORE implementation code
+- Follow Red-Green-Refactor cycle
+- Achieve minimum **95% code coverage**
+- Pass all tests in CI before merge
+
+### Test Boundaries
+
+| Component | Test Focus | Coverage Target |
+|-----------|------------|-----------------|
+| [Component 1] | [What to test] | 95% |
+| [Component 2] | [What to test] | 95% |
+
 ## Protocol Impact *(Cauce-specific)*
 
 <!--

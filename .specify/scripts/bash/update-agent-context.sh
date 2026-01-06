@@ -85,6 +85,11 @@ NEW_FRAMEWORK=""
 NEW_DB=""
 NEW_PROJECT_TYPE=""
 
+# Constitution-related paths and data
+CONSTITUTION_FILE="$REPO_ROOT/.specify/memory/constitution.md"
+CONSTITUTION_VERSION=""
+CONSTITUTION_GATES_PASSED=""
+
 #==============================================================================
 # Utility Functions
 #==============================================================================
@@ -209,11 +214,11 @@ format_technology_stack() {
     local lang="$1"
     local framework="$2"
     local parts=()
-    
+
     # Add non-empty parts
     [[ -n "$lang" && "$lang" != "NEEDS CLARIFICATION" ]] && parts+=("$lang")
     [[ -n "$framework" && "$framework" != "NEEDS CLARIFICATION" && "$framework" != "N/A" ]] && parts+=("$framework")
-    
+
     # Join with proper formatting
     if [[ ${#parts[@]} -eq 0 ]]; then
         echo ""
@@ -227,6 +232,69 @@ format_technology_stack() {
         done
         echo "$result"
     fi
+}
+
+#==============================================================================
+# Constitution Parsing Functions
+#==============================================================================
+
+parse_constitution_data() {
+    local plan_file="$1"
+
+    # Get constitution version if constitution file exists
+    if [[ -f "$CONSTITUTION_FILE" ]]; then
+        CONSTITUTION_VERSION=$(grep -E "^\*\*Version\*\*:" "$CONSTITUTION_FILE" 2>/dev/null | \
+            sed 's/.*\*\*Version\*\*: *//' | sed 's/ .*//' || echo "")
+        if [[ -z "$CONSTITUTION_VERSION" ]]; then
+            # Try alternate format: **Version**: X.X.X | ...
+            CONSTITUTION_VERSION=$(grep -E "Version.*[0-9]+\.[0-9]+\.[0-9]+" "$CONSTITUTION_FILE" 2>/dev/null | \
+                grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -1 || echo "")
+        fi
+        log_info "Found Constitution version: ${CONSTITUTION_VERSION:-unknown}"
+    fi
+
+    # Parse Constitution Check gates from plan.md
+    if [[ -f "$plan_file" ]]; then
+        local passed_gates=()
+        for principle in "I" "II" "III" "IV" "V" "VI" "VII" "VIII" "IX" "X" "XI"; do
+            gate_line=$(grep -E "^\| ${principle}\. " "$plan_file" 2>/dev/null || echo "")
+            if echo "$gate_line" | grep -qE "Pass"; then
+                passed_gates+=("$principle")
+            fi
+        done
+
+        if [[ ${#passed_gates[@]} -gt 0 ]]; then
+            CONSTITUTION_GATES_PASSED=$(IFS=,; echo "${passed_gates[*]}")
+            log_info "Constitution gates passed: $CONSTITUTION_GATES_PASSED"
+        fi
+    fi
+}
+
+get_constitution_summary() {
+    # Returns a brief summary of constitution compliance for agent files
+    local summary=""
+
+    if [[ -n "$CONSTITUTION_VERSION" ]]; then
+        summary="Constitution v${CONSTITUTION_VERSION}"
+        if [[ -n "$CONSTITUTION_GATES_PASSED" ]]; then
+            local gate_count=$(echo "$CONSTITUTION_GATES_PASSED" | tr ',' '\n' | wc -l | tr -d ' ')
+            summary="$summary (${gate_count}/11 principles active)"
+        fi
+    else
+        summary="See .specify/memory/constitution.md"
+    fi
+
+    echo "$summary"
+}
+
+get_key_principles_for_context() {
+    # Returns key principles relevant for AI agent context
+    cat << 'PRINCIPLES'
+- **TDD Required**: Tests before code, 95% coverage (Principle XI)
+- **Spec-First**: Behavior defined in spec before implementation (Principle I)
+- **Schema-Driven**: JSON Schemas for all protocol messages (Principle II)
+- **Component Separation**: Adapter/Hub/Agent boundaries (Principle VI)
+PRINCIPLES
 }
 
 #==============================================================================
@@ -483,12 +551,30 @@ update_existing_agent_file() {
         printf '%s\n' "${new_tech_entries[@]}" >> "$temp_file"
         tech_entries_added=true
     fi
-    
+
     if [[ $has_recent_changes -eq 0 ]] && [[ -n "$new_change_entry" ]]; then
         echo "" >> "$temp_file"
         echo "## Recent Changes" >> "$temp_file"
         echo "$new_change_entry" >> "$temp_file"
         changes_entries_added=true
+    fi
+
+    # Add Protocol Principles section if it doesn't exist and we have constitution data
+    if ! grep -q "^## Protocol Principles" "$target_file" 2>/dev/null; then
+        if [[ -n "$CONSTITUTION_VERSION" ]] || [[ -f "$CONSTITUTION_FILE" ]]; then
+            local constitution_summary
+            constitution_summary=$(get_constitution_summary)
+            echo "" >> "$temp_file"
+            echo "## Protocol Principles" >> "$temp_file"
+            echo "" >> "$temp_file"
+            echo "**Cauce Protocol**: $constitution_summary" >> "$temp_file"
+            echo "" >> "$temp_file"
+            echo "Key development requirements:" >> "$temp_file"
+            get_key_principles_for_context >> "$temp_file"
+            echo "" >> "$temp_file"
+            echo "Full constitution: \`.specify/memory/constitution.md\`" >> "$temp_file"
+            log_info "Added Protocol Principles section"
+        fi
     fi
     
     # Move temp file to target atomically
@@ -762,6 +848,9 @@ main() {
         log_error "Failed to parse plan data"
         exit 1
     fi
+
+    # Parse constitution data for agent context
+    parse_constitution_data "$NEW_PLAN"
     
     # Process based on agent type argument
     local success=true
