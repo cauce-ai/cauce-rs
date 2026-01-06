@@ -113,3 +113,76 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+## Protocol Impact *(Cauce-specific)*
+
+<!--
+  ACTION REQUIRED: Assess how this feature affects the Cauce Protocol.
+  Mark sections N/A if not applicable to this feature.
+-->
+
+### Schema Impact
+
+<!--
+  Per Constitution Principle II: Schema-Driven Contracts
+  Core schemas are REQUIRED; payload schemas are extensible.
+-->
+
+| Schema | Change Type | Description |
+|--------|-------------|-------------|
+| `signal.schema.json` | [New/Modified/None] | [Description or N/A] |
+| `action.schema.json` | [New/Modified/None] | [Description or N/A] |
+| `jsonrpc.schema.json` | [New/Modified/None] | [Description or N/A] |
+| `errors.schema.json` | [New/Modified/None] | [Description or N/A] |
+| `methods/*.schema.json` | [New/Modified/None] | [Description or N/A] |
+| `payloads/*.schema.json` | [New/Modified/None] | [Description or N/A] |
+
+### Component Interactions
+
+<!--
+  Per Constitution Principle VI: Component Separation
+  Map responsibilities to the correct component. No boundary violations.
+-->
+
+| Component | Responsibility in This Feature | NOT Responsible For |
+|-----------|-------------------------------|---------------------|
+| **Adapter** | [What adapters do for this feature] | [What they must NOT do] |
+| **Hub** | [What hub does for this feature] | [What it must NOT do] |
+| **Agent** | [What agents do for this feature] | [What they must NOT do] |
+
+### Transport Considerations
+
+<!--
+  Per Constitution Principle IV: Transport Agnostic
+  Message semantics MUST NOT change based on transport.
+-->
+
+| Transport | Supported | Notes |
+|-----------|-----------|-------|
+| WebSocket | [Yes/No/N/A] | [Any transport-specific considerations] |
+| Server-Sent Events | [Yes/No/N/A] | [Any transport-specific considerations] |
+| HTTP Polling | [Yes/No/N/A] | [Any transport-specific considerations] |
+| Webhooks | [Yes/No/N/A] | [Any transport-specific considerations] |
+
+**Semantic consistency**: [Confirm message meaning is identical across all supported transports]
+
+### Wire Protocol
+
+<!--
+  Per Constitution Principle V: Interoperability
+  JSON-RPC 2.0 compliance is REQUIRED.
+-->
+
+- **New methods**: [List any new JSON-RPC methods introduced, or "None"]
+- **Modified methods**: [List any changed JSON-RPC methods, or "None"]
+- **A2A impact**: [How this affects A2A endpoint, or "None"]
+- **MCP impact**: [How this affects MCP interface, or "None"]
+
+### Version Impact
+
+<!--
+  Per Constitution Principle IX: Semantic Versioning
+-->
+
+- **Change type**: [MAJOR (breaking) / MINOR (backward compatible) / PATCH (bug fix)]
+- **Rationale**: [Why this version bump is appropriate]

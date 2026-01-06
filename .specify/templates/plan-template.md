@@ -17,21 +17,37 @@
   the iteration process.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+**Testing Framework**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]
+**Coverage Tool**: [e.g., cargo-tarpaulin, pytest-cov, llvm-cov or NEEDS CLARIFICATION]
+**Coverage Threshold**: 95% (per Constitution Principle XI)
 **Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Project Type**: [single/web/mobile - determines source structure]
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]
 **Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+| Principle | Gate | Status |
+|-----------|------|--------|
+| **I. Spec-First** | Feature behavior defined in spec before implementation | ☐ Pass / ☐ N/A |
+| **II. Schema-Driven** | Required JSON schemas identified (signal, action, jsonrpc, errors, methods/*) | ☐ Pass / ☐ N/A |
+| **III. Privacy First** | TLS 1.2+ requirement acknowledged; E2E encryption impact assessed | ☐ Pass / ☐ N/A |
+| **IV. Transport Agnostic** | Transport bindings identified (WebSocket/SSE/HTTP/Webhook); semantics unchanged across transports | ☐ Pass / ☐ N/A |
+| **V. Interoperability** | JSON-RPC 2.0 compliance verified; A2A/MCP impact assessed | ☐ Pass / ☐ N/A |
+| **VI. Component Separation** | Responsibilities mapped to Adapter/Hub/Agent; no boundary violations | ☐ Pass / ☐ N/A |
+| **VII. Reliable Delivery** | At-least-once semantics maintained; ack/redelivery handled | ☐ Pass / ☐ N/A |
+| **VIII. Adapter Resilience** | Local queuing/persistence requirements addressed | ☐ Pass / ☐ N/A |
+| **IX. Semantic Versioning** | Version impact assessed (MAJOR/MINOR/PATCH) | ☐ Pass / ☐ N/A |
+| **X. Graceful Degradation** | Capability negotiation supported; unsupported features handled | ☐ Pass / ☐ N/A |
+| **XI. TDD** | Test strategy defined; 95% coverage target confirmed | ☐ Pass / ☐ N/A |
+
+**Blocking violations**: [List any principles that cannot be satisfied and why]
 
 ## Project Structure
 
