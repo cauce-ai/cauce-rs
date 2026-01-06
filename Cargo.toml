@@ -1,0 +1,50 @@
+# =============================================================================
+# Cauce-RS Workspace Configuration
+# =============================================================================
+# This is the root Cargo.toml for the cauce-rs workspace.
+# All crates are organized under the `crates/` directory.
+#
+# For more information about Cargo workspaces, see:
+# https://doc.rust-lang.org/cargo/reference/workspaces.html
+# =============================================================================
+
+[workspace]
+# Use the new resolver for better dependency resolution
+resolver = "2"
+
+# All workspace members are located in the crates/ directory
+# Add new crates with: cargo new crates/<name> --lib
+# They will be automatically discovered via the glob pattern
+members = ["crates/*"]
+
+# =============================================================================
+# Shared Package Metadata
+# =============================================================================
+# These values are inherited by all workspace members via:
+#   [package]
+#   edition.workspace = true
+#   license.workspace = true
+#   repository.workspace = true
+# =============================================================================
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/cauce-ai/cauce-rs"
+rust-version = "1.75"
+authors = ["Cauce Contributors"]
+
+# =============================================================================
+# Shared Dependencies (add as needed)
+# =============================================================================
+# When multiple crates need the same dependency, add it here for version consistency:
+#   [workspace.dependencies]
+#   serde = { version = "1.0", features = ["derive"] }
+#
+# Then inherit in crate Cargo.toml:
+#   [dependencies]
+#   serde = { workspace = true }
+# =============================================================================
+
+[workspace.dependencies]
+# Add shared dependencies here as needed

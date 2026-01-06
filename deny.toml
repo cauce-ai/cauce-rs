@@ -1,0 +1,118 @@
+# =============================================================================
+# Cauce-RS Dependency Policy (cargo-deny)
+# =============================================================================
+# This file configures cargo-deny for license compliance and security auditing.
+#
+# Run checks:
+#   cargo deny check              # Run all checks
+#   cargo deny check licenses     # Check only licenses
+#   cargo deny check advisories   # Check only security advisories
+#   cargo deny check bans         # Check only banned crates
+#   cargo deny check sources      # Check only crate sources
+#
+# For all options, see: https://embarkstudios.github.io/cargo-deny/
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Global Settings
+# -----------------------------------------------------------------------------
+[graph]
+# Analyze all targets (not just current platform)
+all-features = true
+# Include dev-dependencies in analysis
+include-dev = true
+
+# -----------------------------------------------------------------------------
+# Advisories (Security Vulnerabilities)
+# -----------------------------------------------------------------------------
+# Check dependencies against the RustSec advisory database for known
+# security vulnerabilities.
+[advisories]
+# The database is fetched automatically and cached locally
+db-path = "~/.cargo/advisory-db"
+# Check for vulnerabilities on every run (can be slow)
+vulnerability = "deny"
+# Unmaintained crates are a warning (not an error)
+unmaintained = "warn"
+# Crates with no security contact are ignored
+yanked = "warn"
+# No specific advisories are ignored
+ignore = []
+
+# -----------------------------------------------------------------------------
+# Licenses
+# -----------------------------------------------------------------------------
+# Ensure all dependencies use permissive, compatible licenses.
+[licenses]
+# Deny unlicensed crates
+unlicensed = "deny"
+# Copyleft licenses are denied by default unless explicitly allowed
+copyleft = "deny"
+# Allow-list of permissive licenses compatible with any project license
+allow = [
+    # Permissive licenses
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Zlib",
+    # Public domain equivalents
+    "CC0-1.0",
+    "Unlicense",
+    # OpenSSL-specific (for native TLS bindings)
+    "OpenSSL",
+    # Unicode license (common in text processing crates)
+    "Unicode-DFS-2016",
+]
+# Default confidence threshold for license detection
+confidence-threshold = 0.8
+# Exceptions for crates that have unclear or unusual licensing
+exceptions = []
+
+# Clarifications for crates with non-standard license expressions
+[[licenses.clarify]]
+# Ring uses a custom license that is permissive
+name = "ring"
+expression = "MIT AND ISC AND OpenSSL"
+license-files = [{ path = "LICENSE", hash = 0xbd0eed23 }]
+
+# -----------------------------------------------------------------------------
+# Bans (Dependency Restrictions)
+# -----------------------------------------------------------------------------
+# Prevent problematic dependencies from entering the project.
+[bans]
+# Warn on multiple versions of the same crate (helps reduce binary size)
+multiple-versions = "warn"
+# Warn on wildcard dependencies (prefer specific versions)
+wildcards = "warn"
+# Allow workspace dependencies
+allow-build-scripts = "warn"
+# No crates are explicitly denied
+deny = []
+# No crates are explicitly skipped
+skip = []
+# No duplicate skip tree (allow-list for multiple versions)
+skip-tree = []
+
+# -----------------------------------------------------------------------------
+# Sources (Crate Registries)
+# -----------------------------------------------------------------------------
+# Restrict where crates can be fetched from.
+[sources]
+# Only allow crates from crates.io
+unknown-registry = "deny"
+# Git sources require explicit allowance
+unknown-git = "deny"
+# Allow the official crates.io registry
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+# No git repositories are allowed by default
+allow-git = []
+
+# -----------------------------------------------------------------------------
+# Output Settings
+# -----------------------------------------------------------------------------
+[output]
+# Output format for CI/CD integration
+feature-depth = 1

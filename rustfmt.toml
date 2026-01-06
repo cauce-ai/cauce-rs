@@ -1,0 +1,53 @@
+# =============================================================================
+# Cauce-RS Formatting Configuration (rustfmt)
+# =============================================================================
+# This file configures rustfmt for consistent code formatting across the project.
+#
+# Run formatting:
+#   cargo fmt           # Format all code
+#   cargo fmt --check   # Check formatting without modifying files
+#
+# For all options, see: https://rust-lang.github.io/rustfmt/
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Edition
+# -----------------------------------------------------------------------------
+# Explicitly set the Rust edition for parsing.
+# This should match the edition in Cargo.toml.
+edition = "2021"
+
+# -----------------------------------------------------------------------------
+# Line Width
+# -----------------------------------------------------------------------------
+# Maximum line width before wrapping.
+# 100 is a common choice that works well with side-by-side diffs.
+max_width = 100
+
+# -----------------------------------------------------------------------------
+# Nightly-Only Options (commented out for stable rustfmt)
+# -----------------------------------------------------------------------------
+# The following options require nightly rustfmt. Uncomment if using nightly:
+#
+# # Group imports by module for cleaner diffs
+# imports_granularity = "Module"
+#
+# # Separate imports: std, external crates, then local crates
+# group_imports = "StdExternalCrate"
+#
+# # Wrap comments at max_width
+# wrap_comments = true
+#
+# # Format code in doc comments
+# format_code_in_doc_comments = true
+
+# -----------------------------------------------------------------------------
+# Stable Options (using defaults)
+# -----------------------------------------------------------------------------
+# The following are set to their defaults but documented for reference:
+#
+# use_small_heuristics = "Default"  # Use heuristics for small constructs
+# newline_style = "Auto"            # Detect OS line endings
+# indent_style = "Block"            # Standard block indentation
+# tab_spaces = 4                    # 4 spaces per indent level
+# hard_tabs = false                 # Use spaces, not tabs
