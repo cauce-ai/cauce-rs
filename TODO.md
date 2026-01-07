@@ -1,6 +1,6 @@
 # Cauce-RS Implementation TODO
 
-> **Status**: Planning → Implementation
+> **Status**: Implementation (Phase 2)
 > **Target**: Full Rust reference implementation for protocol validation and developer demos
 > **Coverage Requirement**: 95% code coverage (per project guidelines)
 
@@ -10,41 +10,41 @@ This document outlines the complete implementation plan for cauce-rs, a Rust ref
 
 ## Phase 1: Project Foundation
 
-### 1.1 Repository Setup
-- [ ] Initialize Cargo workspace with `Cargo.toml` at root
-- [ ] Configure workspace members for all planned crates
-- [ ] Set up shared workspace dependencies (tokio, serde, etc.)
-- [ ] Create `.gitignore` for Rust/IDE artifacts
-- [ ] Add `rustfmt.toml` with project formatting rules
-- [ ] Add `clippy.toml` with lint configuration
-- [ ] Create `deny.toml` for cargo-deny (license/vulnerability checks)
-- [ ] Set up pre-commit hooks (format, clippy, test)
+### 1.1 Repository Setup ✓
+- [x] Initialize Cargo workspace with `Cargo.toml` at root
+- [x] Configure workspace members for all planned crates
+- [x] Set up shared workspace dependencies (tokio, serde, etc.)
+- [x] Create `.gitignore` for Rust/IDE artifacts
+- [x] Add `rustfmt.toml` with project formatting rules
+- [x] Add `clippy.toml` with lint configuration
+- [x] Create `deny.toml` for cargo-deny (license/vulnerability checks)
+- [x] Set up pre-commit hooks (format, clippy, test)
 
-### 1.2 CI/CD Pipeline
-- [ ] Create GitHub Actions workflow for CI
-  - [ ] Build on multiple platforms (Linux, macOS, Windows)
-  - [ ] Run tests with `cargo test --workspace`
-  - [ ] Run tests with coverage reporting (`cargo-tarpaulin` or `llvm-cov`)
-  - [ ] **Enforce 95% coverage threshold** (fail CI if below)
-  - [ ] Run clippy with `--deny warnings`
-  - [ ] Check formatting with `cargo fmt --check`
-  - [ ] Run cargo-deny for license/security audit
-- [ ] Add workflow for release builds
-- [ ] Add workflow for Docker image builds
+### 1.2 CI/CD Pipeline ✓
+- [x] Create GitHub Actions workflow for CI
+  - [x] Build on multiple platforms (Linux, macOS, Windows)
+  - [x] Run tests with `cargo test --workspace`
+  - [x] Run tests with coverage reporting (`cargo-tarpaulin` or `llvm-cov`)
+  - [x] **Enforce 95% coverage threshold** (fail CI if below)
+  - [x] Run clippy with `--deny warnings`
+  - [x] Check formatting with `cargo fmt --check`
+  - [x] Run cargo-deny for license/security audit
+- [x] Add workflow for release builds
+- [ ] Add workflow for Docker image builds (deferred to Phase 13)
 
-### 1.3 Documentation Structure
-- [ ] Create `docs/` directory structure
-- [ ] Add `CONTRIBUTING.md` with development guidelines
-- [ ] Add `ARCHITECTURE.md` with crate dependency diagram
+### 1.3 Documentation Structure ✓
+- [x] Create `docs/` directory structure
+- [x] Add `CONTRIBUTING.md` with development guidelines
+- [x] Add `ARCHITECTURE.md` with crate dependency diagram
 
 ---
 
 ## Phase 2: Core Library (`cauce-core`)
 
-### 2.1 Project Setup
-- [ ] Create `crates/cauce-core/Cargo.toml`
-- [ ] Add dependencies: `serde`, `serde_json`, `thiserror`, `chrono`, `uuid`, `jsonschema`
-- [ ] Create module structure: `lib.rs`, `types/`, `jsonrpc/`, `validation/`, `errors/`, `constants/`
+### 2.1 Project Setup ✓
+- [x] Create `crates/cauce-core/Cargo.toml`
+- [x] Add dependencies: `serde`, `serde_json`, `thiserror`, `chrono`, `uuid`, `jsonschema`
+- [x] Create module structure: `lib.rs`, `types/`, `jsonrpc/`, `validation/`, `errors/`, `constants/`
 
 ### 2.2 Core Types (`types/` module)
 - [ ] Implement `Signal` struct
