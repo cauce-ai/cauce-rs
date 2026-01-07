@@ -17,6 +17,7 @@
 #![deny(rustdoc::broken_intra_doc_links)]
 
 // Module declarations
+pub mod builders;
 pub mod constants;
 pub mod errors;
 pub mod jsonrpc;
@@ -25,4 +26,22 @@ pub mod validation;
 
 // Re-exports for ergonomic imports
 // Users can write `use cauce_core::Signal;` instead of `use cauce_core::types::Signal;`
-pub use types::{Action, Signal, Topic};
+pub use types::{
+    Action, ActionBody, ActionContext, ActionType, Encrypted, EncryptionAlgorithm, Metadata,
+    Payload, Priority, Signal, Source, Topic,
+};
+
+// Re-export errors
+pub use errors::{BuilderError, ValidationError};
+
+// Re-export validation functions
+pub use validation::{is_valid_action_id, is_valid_signal_id, is_valid_topic};
+
+// Re-export constants
+pub use constants::{
+    ACTION_ID_PATTERN, ACTION_ID_PREFIX, ID_RANDOM_LENGTH, PROTOCOL_VERSION, SIGNAL_ID_PATTERN,
+    SIGNAL_ID_PREFIX, TOPIC_ALLOWED_CHARS, TOPIC_MAX_LENGTH, TOPIC_MIN_LENGTH,
+};
+
+// Re-export builders
+pub use builders::{ActionBuilder, SignalBuilder};
