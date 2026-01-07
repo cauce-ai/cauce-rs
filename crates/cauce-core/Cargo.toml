@@ -1,6 +1,7 @@
 [package]
 name = "cauce-core"
 version = "0.1.0"
+description = "Core types and utilities for the Cauce Protocol"
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
@@ -8,3 +9,12 @@ rust-version.workspace = true
 authors.workspace = true
 
 [dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+jsonschema = { workspace = true }
+
+[dev-dependencies]
+# Test dependencies will be added as needed

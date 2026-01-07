@@ -7,6 +7,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-06
 - N/A - Configuration files only (002-ci-cd-pipeline)
 - Markdown (documentation only) + None (static documentation files) (003-docs-setup)
 - N/A (files only) (003-docs-setup)
+- Rust stable (1.75+) + serde, serde_json, thiserror, chrono, uuid, jsonschema (004-cauce-core)
+- N/A (library crate, no persistence) (004-cauce-core)
 
 - Rust stable (1.75+) + None (configuration files only; tools are external) (001-repo-setup)
 
@@ -26,10 +28,10 @@ cargo test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECH
 Rust stable (1.75+): Follow standard conventions
 
 ## Recent Changes
+- 004-cauce-core: Added Rust stable (1.75+) + serde, serde_json, thiserror, chrono, uuid, jsonschema
 - 003-docs-setup: Added Markdown (documentation only) + None (static documentation files)
 - 002-ci-cd-pipeline: Added YAML (GitHub Actions workflow syntax), Rust 1.75+ (target of CI) + GitHub Actions, cargo, rustfmt, clippy, cargo-deny, cargo-tarpaulin/llvm-cov
 
-- 001-repo-setup: Added Rust stable (1.75+) + None (configuration files only; tools are external)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
