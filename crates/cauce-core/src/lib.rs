@@ -1,14 +1,28 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+//! # cauce-core
+//!
+//! Core types and utilities for the Cauce Protocol.
+//!
+//! This crate provides the foundational types, validation utilities, and constants
+//! used by all other Cauce crates (client-sdk, server-sdk, hub).
+//!
+//! ## Modules
+//!
+//! - [`types`] - Protocol types (Signal, Action, Topic, etc.)
+//! - [`jsonrpc`] - JSON-RPC 2.0 request/response types
+//! - [`validation`] - Validation utilities and schema validation
+//! - [`errors`] - Error types and error codes
+//! - [`constants`] - Protocol constants (method names, limits)
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#![deny(missing_docs)]
+#![deny(rustdoc::broken_intra_doc_links)]
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+// Module declarations
+pub mod constants;
+pub mod errors;
+pub mod jsonrpc;
+pub mod types;
+pub mod validation;
+
+// Re-exports for ergonomic imports
+// Users can write `use cauce_core::Signal;` instead of `use cauce_core::types::Signal;`
+pub use types::{Action, Signal, Topic};
