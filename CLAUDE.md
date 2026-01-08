@@ -9,6 +9,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-06
 - N/A (files only) (003-docs-setup)
 - Rust stable (1.75+) + serde, serde_json, thiserror, chrono, uuid, jsonschema (004-cauce-core)
 - N/A (library crate, no persistence) (004-cauce-core)
+- Rust stable (1.75+) + serde 1.0, serde_json 1.0, thiserror 1.0, chrono 0.4, uuid 1.0 (005-core-types)
+- N/A (library crate, in-memory types only) (005-core-types)
 
 - Rust stable (1.75+) + None (configuration files only; tools are external) (001-repo-setup)
 
@@ -28,9 +30,9 @@ cargo test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECH
 Rust stable (1.75+): Follow standard conventions
 
 ## Recent Changes
+- 005-core-types: Added Rust stable (1.75+) + serde 1.0, serde_json 1.0, thiserror 1.0, chrono 0.4, uuid 1.0
 - 004-cauce-core: Added Rust stable (1.75+) + serde, serde_json, thiserror, chrono, uuid, jsonschema
 - 003-docs-setup: Added Markdown (documentation only) + None (static documentation files)
-- 002-ci-cd-pipeline: Added YAML (GitHub Actions workflow syntax), Rust 1.75+ (target of CI) + GitHub Actions, cargo, rustfmt, clippy, cargo-deny, cargo-tarpaulin/llvm-cov
 
 
 <!-- MANUAL ADDITIONS START -->
