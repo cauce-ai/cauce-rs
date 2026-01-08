@@ -198,49 +198,69 @@ impl<'de> Deserialize<'de> for JsonRpcResponse {
     where
         D: Deserializer<'de>,
     {
-        #[derive(Deserialize)]
-        struct RawResponse {
-            jsonrpc: String,
-            id: Option<RequestId>,
-            result: Option<Value>,
-            error: Option<JsonRpcError>,
-        }
+        // Deserialize into raw Value first to check for key presence
+        // (Option<Value> can't distinguish missing field from null value)
+        let raw: Value = Value::deserialize(deserializer)?;
 
-        let raw = RawResponse::deserialize(deserializer)?;
+        let obj = raw
+            .as_object()
+            .ok_or_else(|| de::Error::custom("expected JSON object"))?;
 
         // Validate jsonrpc version
-        if raw.jsonrpc != JSONRPC_VERSION {
+        let jsonrpc = obj
+            .get("jsonrpc")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| de::Error::custom("missing or invalid 'jsonrpc' field"))?;
+
+        if jsonrpc != JSONRPC_VERSION {
             return Err(de::Error::custom(format!(
                 "invalid jsonrpc version: expected '{}', got '{}'",
-                JSONRPC_VERSION, raw.jsonrpc
+                JSONRPC_VERSION, jsonrpc
             )));
         }
 
-        // Check for invalid response (both result and error)
-        match (raw.result, raw.error) {
-            (Some(result), None) => {
+        // Check for presence of result and error keys (not just their values)
+        // This correctly handles result: null as a valid success response
+        let has_result = obj.contains_key("result");
+        let has_error = obj.contains_key("error");
+
+        match (has_result, has_error) {
+            (true, false) => {
                 // Success response - id must be present
-                let id = raw
-                    .id
-                    .ok_or_else(|| de::Error::custom("success response must have an id"))?;
+                let id: RequestId = obj
+                    .get("id")
+                    .ok_or_else(|| de::Error::custom("success response must have an id"))
+                    .and_then(|v| serde_json::from_value(v.clone()).map_err(de::Error::custom))?;
+                let result = obj.get("result").cloned().unwrap_or(Value::Null);
                 Ok(JsonRpcResponse::Success {
-                    jsonrpc: raw.jsonrpc,
+                    jsonrpc: jsonrpc.to_string(),
                     id,
                     result,
                 })
             }
-            (None, Some(error)) => {
+            (false, true) => {
                 // Error response - id may be null
+                let id: Option<RequestId> = obj.get("id").and_then(|v| {
+                    if v.is_null() {
+                        None
+                    } else {
+                        serde_json::from_value(v.clone()).ok()
+                    }
+                });
+                let error: JsonRpcError = obj
+                    .get("error")
+                    .ok_or_else(|| de::Error::custom("missing 'error' field"))
+                    .and_then(|v| serde_json::from_value(v.clone()).map_err(de::Error::custom))?;
                 Ok(JsonRpcResponse::Error {
-                    jsonrpc: raw.jsonrpc,
-                    id: raw.id,
+                    jsonrpc: jsonrpc.to_string(),
+                    id,
                     error,
                 })
             }
-            (Some(_), Some(_)) => Err(de::Error::custom(
+            (true, true) => Err(de::Error::custom(
                 "response cannot contain both 'result' and 'error' fields",
             )),
-            (None, None) => Err(de::Error::custom(
+            (false, false) => Err(de::Error::custom(
                 "response must contain either 'result' or 'error' field",
             )),
         }
@@ -435,5 +455,28 @@ mod tests {
         assert!(result.is_err());
         let err = result.unwrap_err().to_string();
         assert!(err.contains("must contain either"));
+    }
+
+    // Test that result: null is a valid success response per JSON-RPC 2.0 spec
+    #[test]
+    fn test_success_response_with_null_result() {
+        let json = r#"{"jsonrpc":"2.0","id":1,"result":null}"#;
+        let response: JsonRpcResponse = serde_json::from_str(json).unwrap();
+
+        assert!(response.is_success());
+        assert_eq!(response.id(), Some(&RequestId::from_number(1)));
+        assert_eq!(response.result(), Some(&Value::Null));
+    }
+
+    // Test roundtrip with null result
+    #[test]
+    fn test_response_roundtrip_null_result() {
+        let original = JsonRpcResponse::success(RequestId::from_number(1), Value::Null);
+
+        let json = serde_json::to_string(&original).unwrap();
+        let restored: JsonRpcResponse = serde_json::from_str(&json).unwrap();
+
+        assert_eq!(original, restored);
+        assert_eq!(restored.result(), Some(&Value::Null));
     }
 }
