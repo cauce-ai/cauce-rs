@@ -46,34 +46,34 @@ This document outlines the complete implementation plan for cauce-rs, a Rust ref
 - [x] Add dependencies: `serde`, `serde_json`, `thiserror`, `chrono`, `uuid`, `jsonschema`
 - [x] Create module structure: `lib.rs`, `types/`, `jsonrpc/`, `validation/`, `errors/`, `constants/`
 
-### 2.2 Core Types (`types/` module)
-- [ ] Implement `Signal` struct
-  - [ ] Fields: `id`, `version`, `timestamp`, `source`, `topic`, `payload`, `metadata`, `encrypted`
-  - [ ] ID format validation: `sig_<timestamp>_<random>`
-  - [ ] Implement `Serialize`/`Deserialize`
-  - [ ] Add builder pattern for construction
-- [ ] Implement `Source` struct
-  - [ ] Fields: `type_`, `adapter_id`, `native_id`
-- [ ] Implement `Payload` struct
-  - [ ] Fields: `raw`, `content_type`, `size_bytes`
-- [ ] Implement `Metadata` struct
-  - [ ] Fields: `thread_id`, `in_reply_to`, `references`, `priority`, `tags`
-- [ ] Implement `Priority` enum: `Low`, `Normal`, `High`, `Urgent`
-- [ ] Implement `Action` struct
-  - [ ] Fields: `id`, `version`, `timestamp`, `topic`, `action`, `context`, `encrypted`
-  - [ ] ID format validation: `act_<timestamp>_<random>`
-- [ ] Implement `ActionBody` struct
-  - [ ] Fields: `type_`, `target`, `payload`
-- [ ] Implement `ActionType` enum: `Send`, `Reply`, `Forward`, `React`, `Update`, `Delete`
-- [ ] Implement `ActionContext` struct
-  - [ ] Fields: `in_reply_to`, `agent_id`, `thread_id`, `correlation_id`
-- [ ] Implement `Encrypted` struct
-  - [ ] Fields: `algorithm`, `recipient_public_key`, `nonce`, `ciphertext`
-- [ ] Implement `EncryptionAlgorithm` enum: `X25519XSalsa20Poly1305`, `A256GCM`, `XChaCha20Poly1305`
-- [ ] Implement `Topic` newtype with validation
-  - [ ] Length: 1-255 chars
-  - [ ] Pattern: alphanumeric, dots, hyphens, underscores
-  - [ ] No leading/trailing dots, no consecutive dots
+### 2.2 Core Types (`types/` module) ✓
+- [x] Implement `Signal` struct
+  - [x] Fields: `id`, `version`, `timestamp`, `source`, `topic`, `payload`, `metadata`, `encrypted`
+  - [x] ID format validation: `sig_<timestamp>_<random>`
+  - [x] Implement `Serialize`/`Deserialize`
+  - [x] Add builder pattern for construction
+- [x] Implement `Source` struct
+  - [x] Fields: `type_`, `adapter_id`, `native_id`
+- [x] Implement `Payload` struct
+  - [x] Fields: `raw`, `content_type`, `size_bytes`
+- [x] Implement `Metadata` struct
+  - [x] Fields: `thread_id`, `in_reply_to`, `references`, `priority`, `tags`
+- [x] Implement `Priority` enum: `Low`, `Normal`, `High`, `Urgent`
+- [x] Implement `Action` struct
+  - [x] Fields: `id`, `version`, `timestamp`, `topic`, `action`, `context`, `encrypted`
+  - [x] ID format validation: `act_<timestamp>_<random>`
+- [x] Implement `ActionBody` struct
+  - [x] Fields: `type_`, `target`, `payload`
+- [x] Implement `ActionType` enum: `Send`, `Reply`, `Forward`, `React`, `Update`, `Delete`
+- [x] Implement `ActionContext` struct
+  - [x] Fields: `in_reply_to`, `agent_id`, `thread_id`, `correlation_id`
+- [x] Implement `Encrypted` struct
+  - [x] Fields: `algorithm`, `recipient_public_key`, `nonce`, `ciphertext`
+- [x] Implement `EncryptionAlgorithm` enum: `X25519XSalsa20Poly1305`, `A256GCM`, `XChaCha20Poly1305`
+- [x] Implement `Topic` newtype with validation
+  - [x] Length: 1-255 chars
+  - [x] Pattern: alphanumeric, dots, hyphens, underscores
+  - [x] No leading/trailing dots, no consecutive dots
 
 ### 2.3 JSON-RPC Types (`jsonrpc/` module)
 - [ ] Implement `JsonRpcRequest` struct
