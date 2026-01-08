@@ -45,3 +45,8 @@ pub use constants::{
 
 // Re-export builders
 pub use builders::{ActionBuilder, SignalBuilder};
+
+// Re-export JSON-RPC types
+pub use jsonrpc::{
+    JsonRpcError, JsonRpcNotification, JsonRpcRequest, JsonRpcResponse, RequestId, JSONRPC_VERSION,
+};

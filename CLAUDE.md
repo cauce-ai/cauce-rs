@@ -11,6 +11,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-06
 - N/A (library crate, no persistence) (004-cauce-core)
 - Rust stable (1.75+) + serde 1.0, serde_json 1.0, thiserror 1.0, chrono 0.4, uuid 1.0 (005-core-types)
 - N/A (library crate, in-memory types only) (005-core-types)
+- Rust stable (1.75+) + serde, serde_json, thiserror (all already in workspace) (006-jsonrpc-types)
 
 - Rust stable (1.75+) + None (configuration files only; tools are external) (001-repo-setup)
 
@@ -30,9 +31,9 @@ cargo test [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECH
 Rust stable (1.75+): Follow standard conventions
 
 ## Recent Changes
+- 006-jsonrpc-types: Added Rust stable (1.75+) + serde, serde_json, thiserror (all already in workspace)
 - 005-core-types: Added Rust stable (1.75+) + serde 1.0, serde_json 1.0, thiserror 1.0, chrono 0.4, uuid 1.0
 - 004-cauce-core: Added Rust stable (1.75+) + serde, serde_json, thiserror, chrono, uuid, jsonschema
-- 003-docs-setup: Added Markdown (documentation only) + None (static documentation files)
 
 
 <!-- MANUAL ADDITIONS START -->
