@@ -37,8 +37,10 @@
 //! ```
 
 mod message;
+mod websocket;
 
 pub use message::JsonRpcMessage;
+pub use websocket::WebSocketTransport;
 
 use crate::error::ClientError;
 use async_trait::async_trait;

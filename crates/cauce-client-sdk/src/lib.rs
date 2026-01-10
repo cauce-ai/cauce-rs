@@ -66,7 +66,7 @@ pub mod transport;
 
 pub use config::{AuthConfig, ClientConfig, ClientConfigBuilder, ReconnectConfig, TlsConfig};
 pub use error::ClientError;
-pub use transport::{ConnectionState, JsonRpcMessage, Transport};
+pub use transport::{ConnectionState, JsonRpcMessage, Transport, WebSocketTransport};
 
 // Re-export commonly used types from cauce-core for convenience
 pub use cauce_core::{
