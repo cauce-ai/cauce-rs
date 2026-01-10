@@ -4,12 +4,18 @@
 //!
 //! - [`ValidationError`] - Errors during field and format validation
 //! - [`BuilderError`] - Errors during builder construction
+//! - [`CauceError`] - Protocol-level errors with JSON-RPC error codes
 //!
 //! ## Error Categories
 //!
 //! Errors are categorized by their source:
 //! - Validation errors (invalid topics, IDs, fields)
 //! - Builder errors (missing required fields)
+//! - Protocol errors (JSON-RPC error codes)
+
+mod protocol;
+
+pub use protocol::CauceError;
 
 use thiserror::Error;
 
@@ -44,6 +50,48 @@ pub enum ValidationError {
         field: String,
         /// The reason it's invalid
         reason: String,
+    },
+
+    /// Invalid Subscription ID format
+    #[error("invalid subscription ID: {reason}")]
+    InvalidSubscriptionId {
+        /// The reason the ID is invalid
+        reason: String,
+    },
+
+    /// Invalid Session ID format
+    #[error("invalid session ID: {reason}")]
+    InvalidSessionId {
+        /// The reason the ID is invalid
+        reason: String,
+    },
+
+    /// Invalid Message ID format
+    #[error("invalid message ID: {reason}")]
+    InvalidMessageId {
+        /// The reason the ID is invalid
+        reason: String,
+    },
+
+    /// Invalid topic pattern (for subscription patterns with wildcards)
+    #[error("invalid topic pattern: {reason}")]
+    InvalidTopicPattern {
+        /// The reason the pattern is invalid
+        reason: String,
+    },
+
+    /// Schema validation failed
+    #[error("schema validation failed: {}", errors.join("; "))]
+    SchemaValidation {
+        /// List of validation errors
+        errors: Vec<String>,
+    },
+
+    /// Deserialization failed
+    #[error("deserialization failed: {message}")]
+    Deserialization {
+        /// The error message
+        message: String,
     },
 }
 
