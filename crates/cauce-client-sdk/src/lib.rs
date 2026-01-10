@@ -51,6 +51,7 @@
 //!
 //! - [`config`] - Client configuration types
 //! - [`transport`] - Transport trait and implementations
+//! - [`router`] - Message routing and request-response correlation
 //! - [`error`] - Client error types
 
 #![deny(missing_docs)]
@@ -58,6 +59,7 @@
 
 pub mod config;
 pub mod error;
+pub mod router;
 pub mod transport;
 
 // =============================================================================
@@ -66,6 +68,7 @@ pub mod transport;
 
 pub use config::{AuthConfig, ClientConfig, ClientConfigBuilder, ReconnectConfig, TlsConfig};
 pub use error::ClientError;
+pub use router::{MessageRouter, RouterConfig};
 pub use transport::{ConnectionState, JsonRpcMessage, Transport, WebSocketTransport};
 
 // Re-export commonly used types from cauce-core for convenience
@@ -112,5 +115,7 @@ mod tests {
         let _ = std::any::type_name::<ClientConfig>();
         let _ = std::any::type_name::<ClientError>();
         let _ = std::any::type_name::<ConnectionState>();
+        let _ = std::any::type_name::<MessageRouter>();
+        let _ = std::any::type_name::<RouterConfig>();
     }
 }

@@ -37,6 +37,7 @@
 //! ```
 
 mod message;
+pub mod mock;
 mod websocket;
 
 pub use message::JsonRpcMessage;
