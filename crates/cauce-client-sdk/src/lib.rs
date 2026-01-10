@@ -9,8 +9,7 @@
 //! ## Quick Start
 //!
 //! ```rust,ignore
-//! use cauce_client_sdk::{CauceClient, ClientConfig, AuthConfig};
-//! use cauce_core::ClientType;
+//! use cauce_client_sdk::{CauceClient, ClientConfig, AuthConfig, ClientType};
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,20 +20,23 @@
 //!         .build()?;
 //!
 //!     // Connect to the Hub
-//!     let client = CauceClient::connect(config).await?;
+//!     let mut client = CauceClient::connect(config).await?;
 //!
 //!     // Subscribe to topics
 //!     let mut subscription = client
-//!         .subscribe_to(&["signal.email.*", "signal.slack.*"])
+//!         .subscribe(&["signal.email.*", "signal.slack.*"])
 //!         .await?;
 //!
 //!     // Receive signals
 //!     while let Some(signal) = subscription.next().await {
-//!         println!("Received signal: {:?}", signal.id());
+//!         println!("Received signal: {}", signal.id);
 //!
 //!         // Acknowledge the signal
-//!         client.ack_signal(&subscription, &signal).await?;
+//!         client.ack(subscription.subscription_id(), &[&signal.id]).await?;
 //!     }
+//!
+//!     // Disconnect
+//!     client.disconnect().await?;
 //!
 //!     Ok(())
 //! }
@@ -49,6 +51,7 @@
 //!
 //! ## Modules
 //!
+//! - [`client`] - High-level CauceClient API
 //! - [`config`] - Client configuration types
 //! - [`transport`] - Transport trait and implementations
 //! - [`router`] - Message routing and request-response correlation
@@ -57,6 +60,7 @@
 #![deny(missing_docs)]
 #![deny(rustdoc::broken_intra_doc_links)]
 
+pub mod client;
 pub mod config;
 pub mod error;
 pub mod router;
@@ -66,6 +70,7 @@ pub mod transport;
 // Public API Re-exports
 // =============================================================================
 
+pub use client::{CauceClient, Subscription};
 pub use config::{AuthConfig, ClientConfig, ClientConfigBuilder, ReconnectConfig, TlsConfig};
 pub use error::ClientError;
 pub use router::{MessageRouter, RouterConfig};
@@ -94,6 +99,7 @@ pub use cauce_core::{
     AckResponse,
     HelloRequest,
     HelloResponse,
+    PublishMessage,
     PublishRequest,
     PublishResponse,
     SubscribeRequest,
@@ -112,6 +118,8 @@ mod tests {
     #[test]
     fn test_module_exports() {
         // Verify that key types are accessible
+        let _ = std::any::type_name::<CauceClient>();
+        let _ = std::any::type_name::<Subscription>();
         let _ = std::any::type_name::<ClientConfig>();
         let _ = std::any::type_name::<ClientError>();
         let _ = std::any::type_name::<ConnectionState>();
