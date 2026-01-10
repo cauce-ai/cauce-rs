@@ -1,6 +1,6 @@
 # Cauce-RS Implementation TODO
 
-> **Status**: Implementation (Phase 2)
+> **Status**: Implementation (Phase 3 - Client SDK)
 > **Target**: Full Rust reference implementation for protocol validation and developer demos
 > **Coverage Requirement**: 95% code coverage (per project guidelines)
 
@@ -75,149 +75,149 @@ This document outlines the complete implementation plan for cauce-rs, a Rust ref
   - [x] Pattern: alphanumeric, dots, hyphens, underscores
   - [x] No leading/trailing dots, no consecutive dots
 
-### 2.3 JSON-RPC Types (`jsonrpc/` module)
-- [ ] Implement `JsonRpcRequest` struct
-  - [ ] Fields: `jsonrpc`, `id`, `method`, `params`
-  - [ ] Validate `jsonrpc` is "2.0"
-- [ ] Implement `JsonRpcResponse` struct
-  - [ ] Variants: success (with `result`) or error (with `error`)
-- [ ] Implement `JsonRpcNotification` struct
-  - [ ] No `id` field
-- [ ] Implement `JsonRpcError` struct
-  - [ ] Fields: `code`, `message`, `data`
-- [ ] Implement `RequestId` type (string or integer)
-- [ ] Add helper methods for creating responses/errors
+### 2.3 JSON-RPC Types (`jsonrpc/` module) ✓
+- [x] Implement `JsonRpcRequest` struct
+  - [x] Fields: `jsonrpc`, `id`, `method`, `params`
+  - [x] Validate `jsonrpc` is "2.0"
+- [x] Implement `JsonRpcResponse` struct
+  - [x] Variants: success (with `result`) or error (with `error`)
+- [x] Implement `JsonRpcNotification` struct
+  - [x] No `id` field
+- [x] Implement `JsonRpcError` struct
+  - [x] Fields: `code`, `message`, `data`
+- [x] Implement `RequestId` type (string or integer)
+- [x] Add helper methods for creating responses/errors
 
-### 2.4 Method Parameter Types (`methods/` module)
-- [ ] `HelloRequest` / `HelloResponse`
-  - [ ] Request: `protocol_version`, `min_protocol_version`, `max_protocol_version`, `client_id`, `client_type`, `capabilities`, `auth`
-  - [ ] Response: `session_id`, `server_version`, `capabilities`, `session_expires_at`
-- [ ] `Auth` struct: `type_`, `token`, `api_key`
-- [ ] `AuthType` enum: `Bearer`, `ApiKey`, `Mtls`
-- [ ] `ClientType` enum: `Adapter`, `Agent`, `A2aAgent`
-- [ ] `Capability` enum: `Subscribe`, `Publish`, `Ack`, `E2eEncryption`
-- [ ] `SubscribeRequest` / `SubscribeResponse`
-  - [ ] Request: `topics`, `approval_type`, `reason`, `transport`, `webhook`, `e2e`
-  - [ ] Response: `subscription_id`, `status`, `topics`, `created_at`, `expires_at`
-- [ ] `ApprovalType` enum: `Automatic`, `UserApproved`
-- [ ] `Transport` enum: `WebSocket`, `Sse`, `Polling`, `LongPolling`, `Webhook`
-- [ ] `WebhookConfig` struct: `url`, `secret`, `headers`
-- [ ] `E2eConfig` struct: `enabled`, `public_key`, `supported_algorithms`
-- [ ] `UnsubscribeRequest` / `UnsubscribeResponse`
-- [ ] `PublishRequest` / `PublishResponse`
-  - [ ] Request: `topic`, `message` (Signal or Action)
-  - [ ] Response: `message_id`, `delivered_to`, `queued_for`
-- [ ] `AckRequest` / `AckResponse`
-  - [ ] Request: `signal_ids`, `subscription_id`
-  - [ ] Response: `acknowledged`, `failed`
-- [ ] `SignalDelivery` struct (for `cauce.signal` notification)
-  - [ ] Fields: `topic`, `signal`
-- [ ] `SubscriptionApproveRequest` / `SubscriptionDenyRequest` / `SubscriptionRevokeRequest`
-- [ ] `SubscriptionListRequest` / `SubscriptionListResponse`
-- [ ] `SubscriptionInfo` struct
-- [ ] `SubscriptionStatusNotification` struct
-- [ ] `PingParams` / `PongParams` (timestamp)
-- [ ] `SchemasListRequest` / `SchemasListResponse`
-- [ ] `SchemasGetRequest` / `SchemasGetResponse`
+### 2.4 Method Parameter Types (`methods/` module) ✓
+- [x] `HelloRequest` / `HelloResponse`
+  - [x] Request: `protocol_version`, `min_protocol_version`, `max_protocol_version`, `client_id`, `client_type`, `capabilities`, `auth`
+  - [x] Response: `session_id`, `server_version`, `capabilities`, `session_expires_at`
+- [x] `Auth` struct: `type_`, `token`, `api_key`
+- [x] `AuthType` enum: `Bearer`, `ApiKey`, `Mtls`
+- [x] `ClientType` enum: `Adapter`, `Agent`, `A2aAgent`
+- [x] `Capability` enum: `Subscribe`, `Publish`, `Ack`, `E2eEncryption`
+- [x] `SubscribeRequest` / `SubscribeResponse`
+  - [x] Request: `topics`, `approval_type`, `reason`, `transport`, `webhook`, `e2e`
+  - [x] Response: `subscription_id`, `status`, `topics`, `created_at`, `expires_at`
+- [x] `ApprovalType` enum: `Automatic`, `UserApproved`
+- [x] `Transport` enum: `WebSocket`, `Sse`, `Polling`, `LongPolling`, `Webhook`
+- [x] `WebhookConfig` struct: `url`, `secret`, `headers`
+- [x] `E2eConfig` struct: `enabled`, `public_key`, `supported_algorithms`
+- [x] `UnsubscribeRequest` / `UnsubscribeResponse`
+- [x] `PublishRequest` / `PublishResponse`
+  - [x] Request: `topic`, `message` (Signal or Action)
+  - [x] Response: `message_id`, `delivered_to`, `queued_for`
+- [x] `AckRequest` / `AckResponse`
+  - [x] Request: `signal_ids`, `subscription_id`
+  - [x] Response: `acknowledged`, `failed`
+- [x] `SignalDelivery` struct (for `cauce.signal` notification)
+  - [x] Fields: `topic`, `signal`
+- [x] `SubscriptionApproveRequest` / `SubscriptionDenyRequest` / `SubscriptionRevokeRequest`
+- [x] `SubscriptionListRequest` / `SubscriptionListResponse`
+- [x] `SubscriptionInfo` struct
+- [x] `SubscriptionStatusNotification` struct
+- [x] `PingParams` / `PongParams` (timestamp)
+- [x] `SchemasListRequest` / `SchemasListResponse`
+- [x] `SchemasGetRequest` / `SchemasGetResponse`
 
-### 2.5 Error Codes (`errors/` module)
-- [ ] Define `CauceError` enum with all error variants
-- [ ] JSON-RPC standard errors:
-  - [ ] `ParseError` (-32700)
-  - [ ] `InvalidRequest` (-32600)
-  - [ ] `MethodNotFound` (-32601)
-  - [ ] `InvalidParams` (-32602)
-  - [ ] `InternalError` (-32603)
-- [ ] Cauce protocol errors:
-  - [ ] `SubscriptionNotFound` (-32001)
-  - [ ] `TopicNotFound` (-32002)
-  - [ ] `NotAuthorized` (-32003)
-  - [ ] `SubscriptionPending` (-32004)
-  - [ ] `SubscriptionDenied` (-32005)
-  - [ ] `RateLimited` (-32006)
-  - [ ] `SignalTooLarge` (-32007)
-  - [ ] `EncryptionRequired` (-32008)
-  - [ ] `InvalidEncryption` (-32009)
-  - [ ] `AdapterUnavailable` (-32010)
-  - [ ] `DeliveryFailed` (-32011)
-  - [ ] `QueueFull` (-32012)
-  - [ ] `SessionExpired` (-32013)
-  - [ ] `UnsupportedTransport` (-32014)
-  - [ ] `InvalidTopic` (-32015)
-- [ ] Implement `From<CauceError> for JsonRpcError`
-- [ ] Add error data helpers (details, suggestion, retry_after_ms, field)
+### 2.5 Error Codes (`errors/` module) ✓
+- [x] Define `CauceError` enum with all error variants
+- [x] JSON-RPC standard errors:
+  - [x] `ParseError` (-32700)
+  - [x] `InvalidRequest` (-32600)
+  - [x] `MethodNotFound` (-32601)
+  - [x] `InvalidParams` (-32602)
+  - [x] `InternalError` (-32603)
+- [x] Cauce protocol errors:
+  - [x] `SubscriptionNotFound` (-32001)
+  - [x] `TopicNotFound` (-32002)
+  - [x] `NotAuthorized` (-32003)
+  - [x] `SubscriptionPending` (-32004)
+  - [x] `SubscriptionDenied` (-32005)
+  - [x] `RateLimited` (-32006)
+  - [x] `SignalTooLarge` (-32007)
+  - [x] `EncryptionRequired` (-32008)
+  - [x] `InvalidEncryption` (-32009)
+  - [x] `AdapterUnavailable` (-32010)
+  - [x] `DeliveryFailed` (-32011)
+  - [x] `QueueFull` (-32012)
+  - [x] `SessionExpired` (-32013)
+  - [x] `UnsupportedTransport` (-32014)
+  - [x] `InvalidTopic` (-32015)
+- [x] Implement `From<CauceError> for JsonRpcError`
+- [x] Add error data helpers (details, suggestion, retry_after_ms, field)
 
-### 2.6 Method Constants (`constants/` module)
-- [ ] Define method name constants:
-  - [ ] `HELLO` = "cauce.hello"
-  - [ ] `GOODBYE` = "cauce.goodbye"
-  - [ ] `PING` = "cauce.ping"
-  - [ ] `PONG` = "cauce.pong"
-  - [ ] `PUBLISH` = "cauce.publish"
-  - [ ] `SUBSCRIBE` = "cauce.subscribe"
-  - [ ] `UNSUBSCRIBE` = "cauce.unsubscribe"
-  - [ ] `SIGNAL` = "cauce.signal"
-  - [ ] `ACK` = "cauce.ack"
-  - [ ] `SUBSCRIPTION_REQUEST` = "cauce.subscription.request"
-  - [ ] `SUBSCRIPTION_APPROVE` = "cauce.subscription.approve"
-  - [ ] `SUBSCRIPTION_DENY` = "cauce.subscription.deny"
-  - [ ] `SUBSCRIPTION_LIST` = "cauce.subscription.list"
-  - [ ] `SUBSCRIPTION_REVOKE` = "cauce.subscription.revoke"
-  - [ ] `SUBSCRIPTION_STATUS` = "cauce.subscription.status"
-  - [ ] `SCHEMAS_LIST` = "cauce.schemas.list"
-  - [ ] `SCHEMAS_GET` = "cauce.schemas.get"
-- [ ] Define protocol version constant: `PROTOCOL_VERSION` = "1.0"
-- [ ] Define size limits:
-  - [ ] `MAX_TOPIC_LENGTH` = 255
-  - [ ] `MAX_SIGNAL_PAYLOAD_SIZE` = 10 * 1024 * 1024
-  - [ ] `MAX_TOPICS_PER_SUBSCRIPTION` = 100
-  - [ ] `MAX_SUBSCRIPTIONS_PER_CLIENT` = 1000
-  - [ ] `MAX_SIGNALS_PER_BATCH` = 100
+### 2.6 Method Constants (`constants/` module) ✓
+- [x] Define method name constants:
+  - [x] `HELLO` = "cauce.hello"
+  - [x] `GOODBYE` = "cauce.goodbye"
+  - [x] `PING` = "cauce.ping"
+  - [x] `PONG` = "cauce.pong"
+  - [x] `PUBLISH` = "cauce.publish"
+  - [x] `SUBSCRIBE` = "cauce.subscribe"
+  - [x] `UNSUBSCRIBE` = "cauce.unsubscribe"
+  - [x] `SIGNAL` = "cauce.signal"
+  - [x] `ACK` = "cauce.ack"
+  - [x] `SUBSCRIPTION_REQUEST` = "cauce.subscription.request"
+  - [x] `SUBSCRIPTION_APPROVE` = "cauce.subscription.approve"
+  - [x] `SUBSCRIPTION_DENY` = "cauce.subscription.deny"
+  - [x] `SUBSCRIPTION_LIST` = "cauce.subscription.list"
+  - [x] `SUBSCRIPTION_REVOKE` = "cauce.subscription.revoke"
+  - [x] `SUBSCRIPTION_STATUS` = "cauce.subscription.status"
+  - [x] `SCHEMAS_LIST` = "cauce.schemas.list"
+  - [x] `SCHEMAS_GET` = "cauce.schemas.get"
+- [x] Define protocol version constant: `PROTOCOL_VERSION` = "1.0"
+- [x] Define size limits:
+  - [x] `MAX_TOPIC_LENGTH` = 255
+  - [x] `MAX_SIGNAL_PAYLOAD_SIZE` = 10 * 1024 * 1024
+  - [x] `MAX_TOPICS_PER_SUBSCRIPTION` = 100
+  - [x] `MAX_SUBSCRIPTIONS_PER_CLIENT` = 1000
+  - [x] `MAX_SIGNALS_PER_BATCH` = 100
 
-### 2.7 Validation (`validation/` module)
-- [ ] Embed JSON schemas as static assets using `include_str!`:
-  - [ ] `signal.schema.json`
-  - [ ] `action.schema.json`
-  - [ ] `jsonrpc.schema.json`
-  - [ ] `errors.schema.json`
-  - [ ] All method schemas (subscribe, unsubscribe, publish, ack, hello, subscription, schemas)
-  - [ ] Payload schemas (email, sms, slack, voice)
-- [ ] Implement `validate_signal(value: &Value) -> Result<Signal, ValidationError>`
-- [ ] Implement `validate_action(value: &Value) -> Result<Action, ValidationError>`
-- [ ] Implement `validate_topic(topic: &str) -> Result<(), ValidationError>`
-- [ ] Implement `validate_topic_pattern(pattern: &str) -> Result<(), ValidationError>` (allows wildcards)
-- [ ] Implement `validate_signal_id(id: &str) -> Result<(), ValidationError>`
-- [ ] Implement `validate_action_id(id: &str) -> Result<(), ValidationError>`
-- [ ] Implement `validate_subscription_id(id: &str) -> Result<(), ValidationError>`
-- [ ] Implement `validate_session_id(id: &str) -> Result<(), ValidationError>`
-- [ ] Create `ValidationError` type with detailed error information
+### 2.7 Validation (`validation/` module) ✓
+- [x] Embed JSON schemas as static assets using `include_str!`:
+  - [x] `signal.schema.json`
+  - [x] `action.schema.json`
+  - [ ] `jsonrpc.schema.json` (deferred - not needed for core validation)
+  - [ ] `errors.schema.json` (deferred - not needed for core validation)
+  - [ ] All method schemas (deferred - types enforce structure)
+  - [ ] Payload schemas (deferred - adapter-specific)
+- [x] Implement `validate_signal(value: &Value) -> Result<Signal, ValidationError>`
+- [x] Implement `validate_action(value: &Value) -> Result<Action, ValidationError>`
+- [x] Implement `validate_topic(topic: &str) -> Result<(), ValidationError>`
+- [x] Implement `validate_topic_pattern(pattern: &str) -> Result<(), ValidationError>` (allows wildcards)
+- [x] Implement `validate_signal_id(id: &str) -> Result<(), ValidationError>`
+- [x] Implement `validate_action_id(id: &str) -> Result<(), ValidationError>`
+- [x] Implement `validate_subscription_id(id: &str) -> Result<(), ValidationError>`
+- [x] Implement `validate_session_id(id: &str) -> Result<(), ValidationError>`
+- [x] Create `ValidationError` type with detailed error information
 
-### 2.8 ID Generation Utilities
-- [ ] Implement `generate_signal_id() -> String`
-- [ ] Implement `generate_action_id() -> String`
-- [ ] Implement `generate_subscription_id() -> String`
-- [ ] Implement `generate_session_id() -> String`
-- [ ] Implement `generate_message_id() -> String`
+### 2.8 ID Generation Utilities ✓
+- [x] Implement `generate_signal_id() -> String`
+- [x] Implement `generate_action_id() -> String`
+- [x] Implement `generate_subscription_id() -> String`
+- [x] Implement `generate_session_id() -> String`
+- [x] Implement `generate_message_id() -> String`
 
-### 2.9 Topic Matching Utilities
-- [ ] Implement `TopicMatcher` struct
-- [ ] Implement `matches(topic: &str, pattern: &str) -> bool`
-  - [ ] Support `*` for single segment match
-  - [ ] Support `**` for multi-segment match
-- [ ] Implement efficient topic trie for subscription matching
+### 2.9 Topic Matching Utilities ✓
+- [x] Implement `TopicMatcher` struct
+- [x] Implement `matches(topic: &str, pattern: &str) -> bool`
+  - [x] Support `*` for single segment match
+  - [x] Support `**` for multi-segment match
+- [ ] Implement efficient topic trie for subscription matching (deferred to Phase 4)
 
-### 2.10 Testing for cauce-core
-- [ ] Unit tests for Signal serialization/deserialization
-- [ ] Unit tests for Action serialization/deserialization
-- [ ] Unit tests for JSON-RPC message parsing
-- [ ] Unit tests for all error code conversions
-- [ ] Unit tests for topic validation (valid and invalid cases)
-- [ ] Unit tests for topic pattern matching (wildcards)
-- [ ] Unit tests for ID generation format
-- [ ] Unit tests for ID validation
-- [ ] Property-based tests for topic matching
-- [ ] Integration test: roundtrip serialize/deserialize all types
-- [ ] Test against JSON schemas from protocol spec
+### 2.10 Testing for cauce-core ✓
+- [x] Unit tests for Signal serialization/deserialization
+- [x] Unit tests for Action serialization/deserialization
+- [x] Unit tests for JSON-RPC message parsing
+- [x] Unit tests for all error code conversions
+- [x] Unit tests for topic validation (valid and invalid cases)
+- [x] Unit tests for topic pattern matching (wildcards)
+- [x] Unit tests for ID generation format
+- [x] Unit tests for ID validation
+- [ ] Property-based tests for topic matching (deferred - optional)
+- [x] Integration test: roundtrip serialize/deserialize all types
+- [x] Test against JSON schemas from protocol spec
 
 ---
 

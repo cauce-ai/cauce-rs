@@ -1,0 +1,45 @@
+[package]
+name = "cauce-client-sdk"
+version = "0.1.0"
+description = "Client SDK for the Cauce Protocol - async Rust client for connecting to Cauce Hubs"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+
+[dependencies]
+# Core types from cauce-core
+cauce-core = { path = "../cauce-core" }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Async runtime
+tokio = { workspace = true }
+tokio-stream = { workspace = true }
+
+# WebSocket
+tokio-tungstenite = { workspace = true }
+
+# HTTP client (for SSE, polling)
+reqwest = { workspace = true }
+
+# Async trait support
+async-trait = { workspace = true }
+
+# Futures utilities
+futures = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Time handling
+chrono = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }
