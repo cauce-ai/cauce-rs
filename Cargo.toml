@@ -89,3 +89,6 @@ futures = "0.3"
 
 # Logging/tracing
 tracing = "0.1"
+
+# HTTP server (for webhook transport)
+hyper = { version = "0.14", features = ["server", "tcp", "http1"] }

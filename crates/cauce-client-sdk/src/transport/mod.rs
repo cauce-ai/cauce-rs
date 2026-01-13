@@ -36,9 +36,20 @@
 //! }
 //! ```
 
+mod long_polling;
 mod message;
+pub mod mock;
+mod polling;
+mod sse;
+mod webhook;
+mod websocket;
 
+pub use long_polling::LongPollingTransport;
 pub use message::JsonRpcMessage;
+pub use polling::PollingTransport;
+pub use sse::SseTransport;
+pub use webhook::WebhookTransport;
+pub use websocket::WebSocketTransport;
 
 use crate::error::ClientError;
 use async_trait::async_trait;
