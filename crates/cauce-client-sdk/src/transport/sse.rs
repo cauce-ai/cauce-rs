@@ -110,16 +110,21 @@ impl SseTransport {
     }
 
     /// Spawn the background task that receives SSE events.
-    fn spawn_receive_task(&self, mut shutdown_rx: tokio::sync::broadcast::Receiver<()>) {
+    ///
+    /// Returns the `JoinHandle` so the caller can store it for proper cleanup.
+    fn spawn_receive_task(
+        &self,
+        mut shutdown_rx: tokio::sync::broadcast::Receiver<()>,
+    ) -> JoinHandle<()> {
         let client = self.client.clone();
         let url = self.sse_url();
         let headers = self.build_headers();
         let receive_queue = Arc::clone(&self.receive_queue);
         let last_event_id = Arc::clone(&self.last_event_id);
 
-        let task = tokio::spawn(async move {
+        tokio::spawn(async move {
             loop {
-                // Check for shutdown
+                // Check for shutdown before starting a new connection attempt
                 if shutdown_rx.try_recv().is_ok() {
                     tracing::debug!("SSE receive task shutting down");
                     break;
@@ -135,8 +140,16 @@ impl SseTransport {
                     request = request.header("Last-Event-ID", id.clone());
                 }
 
-                // Send request and process stream
-                match request.send().await {
+                // Send request with shutdown check using select
+                let response = tokio::select! {
+                    _ = shutdown_rx.recv() => {
+                        tracing::debug!("SSE receive task shutting down during connect");
+                        return;
+                    }
+                    result = request.send() => result,
+                };
+
+                match response {
                     Ok(response) => {
                         if !response.status().is_success() {
                             tracing::error!("SSE connection failed: {}", response.status());
@@ -150,12 +163,20 @@ impl SseTransport {
                         let mut stream = response.bytes_stream();
                         let mut buffer = String::new();
 
-                        while let Some(chunk_result) = stream.next().await {
-                            // Check for shutdown
-                            if shutdown_rx.try_recv().is_ok() {
-                                tracing::debug!("SSE receive task shutting down");
-                                return;
-                            }
+                        loop {
+                            // Use select to check shutdown while waiting for stream data
+                            let chunk_result = tokio::select! {
+                                _ = shutdown_rx.recv() => {
+                                    tracing::debug!("SSE receive task shutting down");
+                                    return;
+                                }
+                                chunk = stream.next() => chunk,
+                            };
+
+                            let Some(chunk_result) = chunk_result else {
+                                // Stream ended
+                                break;
+                            };
 
                             match chunk_result {
                                 Ok(chunk) => {
@@ -195,14 +216,16 @@ impl SseTransport {
                     }
                 }
 
-                // Wait before reconnecting
-                tokio::time::sleep(Duration::from_secs(1)).await;
+                // Wait before reconnecting, but also check for shutdown
+                tokio::select! {
+                    _ = shutdown_rx.recv() => {
+                        tracing::debug!("SSE receive task shutting down during reconnect wait");
+                        return;
+                    }
+                    _ = tokio::time::sleep(Duration::from_secs(1)) => {}
+                }
             }
-        });
-
-        // Note: receive_task is not stored here because spawn_receive_task takes &self
-        // The task is still running and will be cleaned up via shutdown_tx
-        std::mem::drop(task);
+        })
     }
 
     /// Parse an SSE event into an optional event ID and message.
@@ -259,8 +282,8 @@ impl Transport for SseTransport {
         let (shutdown_tx, shutdown_rx) = tokio::sync::broadcast::channel(1);
         self.shutdown_tx = Some(shutdown_tx);
 
-        // Spawn receive task
-        self.spawn_receive_task(shutdown_rx);
+        // Spawn receive task and store the handle for proper cleanup
+        self.receive_task = Some(self.spawn_receive_task(shutdown_rx));
 
         self.state = ConnectionState::Connected;
         tracing::info!("SSE transport connected");
