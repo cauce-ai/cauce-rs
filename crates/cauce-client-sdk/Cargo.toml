@@ -41,5 +41,8 @@ tracing = { workspace = true }
 # Time handling
 chrono = { workspace = true }
 
+# HTTP server (for webhook transport)
+hyper = { workspace = true }
+
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util", "macros"] }

@@ -55,6 +55,7 @@
 //! - [`config`] - Client configuration types
 //! - [`transport`] - Transport trait and implementations
 //! - [`router`] - Message routing and request-response correlation
+//! - [`queue`] - Local message queue for resilience
 //! - [`error`] - Client error types
 
 #![deny(missing_docs)]
@@ -63,6 +64,7 @@
 pub mod client;
 pub mod config;
 pub mod error;
+pub mod queue;
 pub mod router;
 pub mod transport;
 
@@ -73,8 +75,12 @@ pub mod transport;
 pub use client::{CauceClient, Subscription};
 pub use config::{AuthConfig, ClientConfig, ClientConfigBuilder, ReconnectConfig, TlsConfig};
 pub use error::ClientError;
+pub use queue::{LocalQueue, QueueConfig, QueueStats};
 pub use router::{MessageRouter, RouterConfig};
-pub use transport::{ConnectionState, JsonRpcMessage, Transport, WebSocketTransport};
+pub use transport::{
+    ConnectionState, JsonRpcMessage, LongPollingTransport, PollingTransport, SseTransport,
+    Transport, WebSocketTransport, WebhookTransport,
+};
 
 // Re-export commonly used types from cauce-core for convenience
 pub use cauce_core::{
