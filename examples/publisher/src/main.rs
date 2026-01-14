@@ -36,11 +36,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Starting Cauce Publisher example");
 
     // Configure the client as an Adapter
-    let config = ClientConfig::builder("ws://127.0.0.1:8080", "example-publisher")
+    let config = ClientConfig::builder("ws://127.0.0.1:8080/cauce/v1/ws", "example-publisher")
         .client_type(ClientType::Adapter)
         .build()?;
 
-    info!("Connecting to hub at ws://127.0.0.1:8080...");
+    info!("Connecting to hub at ws://127.0.0.1:8080/cauce/v1/ws...");
 
     // Connect to the hub
     let mut client = match CauceClient::connect(config).await {
