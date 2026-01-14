@@ -15,7 +15,7 @@ resolver = "2"
 # All workspace members are located in the crates/ directory
 # Add new crates with: cargo new crates/<name> --lib
 # They will be automatically discovered via the glob pattern
-members = ["crates/*"]
+members = ["crates/*", "examples/*"]
 
 # =============================================================================
 # Shared Package Metadata

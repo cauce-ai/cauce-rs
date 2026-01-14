@@ -1,0 +1,19 @@
+[package]
+name = "subscriber"
+version = "0.1.0"
+description = "Example Cauce Protocol subscriber (agent client)"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[[bin]]
+name = "subscriber"
+path = "src/main.rs"
+
+[dependencies]
+cauce-client-sdk = { path = "../../crates/cauce-client-sdk" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde_json = { workspace = true }

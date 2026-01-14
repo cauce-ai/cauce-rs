@@ -1,0 +1,18 @@
+[package]
+name = "hub-server"
+version = "0.1.0"
+description = "Example Cauce Protocol hub server"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[[bin]]
+name = "hub-server"
+path = "src/main.rs"
+
+[dependencies]
+cauce-server-sdk = { path = "../../crates/cauce-server-sdk" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
