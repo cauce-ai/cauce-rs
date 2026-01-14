@@ -30,6 +30,7 @@
 //!     .route("/ws", axum::routing::get(handler.handler()));
 //! ```
 
+use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
@@ -39,7 +40,7 @@ use axum::response::IntoResponse;
 use futures::stream::SplitSink;
 use futures::{SinkExt, StreamExt};
 use serde_json::json;
-use tokio::sync::{broadcast, mpsc, Mutex};
+use tokio::sync::{broadcast, mpsc, Mutex, RwLock};
 use tracing::{debug, error, info, warn};
 
 use super::message::JsonRpcMessage;
@@ -72,6 +73,9 @@ where
     delivery_tracker: Arc<D>,
     session_manager: Arc<M>,
     shutdown_tx: broadcast::Sender<()>,
+    /// Registry mapping session IDs to their signal delivery channels.
+    /// Used to push signals to connected clients in real-time.
+    connections: Arc<RwLock<HashMap<String, mpsc::Sender<SignalDelivery>>>>,
 }
 
 impl<S, R, D, M> WebSocketHandler<S, R, D, M>
@@ -95,6 +99,35 @@ where
             delivery_tracker,
             session_manager,
             shutdown_tx,
+            connections: Arc::new(RwLock::new(HashMap::new())),
+        }
+    }
+
+    /// Register a connection's signal sender for a session.
+    async fn register_connection(&self, session_id: &str, signal_tx: mpsc::Sender<SignalDelivery>) {
+        let mut conns = self.connections.write().await;
+        conns.insert(session_id.to_string(), signal_tx);
+        debug!("Registered connection for session {}", session_id);
+    }
+
+    /// Unregister a connection when it disconnects.
+    async fn unregister_connection(&self, session_id: &str) {
+        let mut conns = self.connections.write().await;
+        conns.remove(session_id);
+        debug!("Unregistered connection for session {}", session_id);
+    }
+
+    /// Push a signal to all sessions that have matching subscriptions.
+    async fn push_signal_to_subscribers(&self, session_ids: &[String], delivery: &SignalDelivery) {
+        let conns = self.connections.read().await;
+        for session_id in session_ids {
+            if let Some(tx) = conns.get(session_id) {
+                if let Err(e) = tx.send(delivery.clone()).await {
+                    warn!("Failed to push signal to session {}: {}", session_id, e);
+                } else {
+                    debug!("Pushed signal {} to session {}", delivery.signal.id, session_id);
+                }
+            }
         }
     }
 
@@ -182,6 +215,7 @@ where
         let session = session_id.lock().await;
         if let Some(ref sid) = *session {
             info!("Cleaning up session: {}", sid);
+            self.unregister_connection(sid).await;
             if let Err(e) = self.session_manager.remove_session(sid).await {
                 warn!("Failed to remove session on disconnect: {}", e);
             }
@@ -342,6 +376,7 @@ where
 
         // Register the connection for signal delivery
         connection.set_session_id(&new_session_id);
+        self.register_connection(&new_session_id, connection.signal_sender()).await;
 
         info!(
             "Client {} authenticated with session {}",
@@ -466,7 +501,7 @@ where
         let publish_request: PublishRequest = self.parse_params(request.params(), &id)?;
 
         // Route the message to find matching subscriptions
-        let route_result = self.message_router.route(&publish_request).await.map_err(|e| {
+        let _route_result = self.message_router.route(&publish_request).await.map_err(|e| {
             JsonRpcResponse::error(
                 Some(id.clone()),
                 JsonRpcError::with_data(-32603, "Internal error", json!({"details": e.to_string()})),
@@ -485,20 +520,27 @@ where
                 )
             })?;
 
-        // Create and track deliveries for each subscription
+        // Create and track deliveries for each subscription, and push to connected clients
         let mut message_id = format!("msg_{}", uuid::Uuid::new_v4());
+        let mut delivered_count = 0u32;
         for sub in &matching_subs {
             if let Ok(delivery) = self.message_router.create_delivery(&publish_request, sub) {
                 message_id = delivery.signal.id.clone();
+
+                // Track the delivery
                 if let Err(e) = self.delivery_tracker.track(&sub.subscription_id, &delivery).await {
                     warn!("Failed to track delivery for {}: {}", sub.subscription_id, e);
                 }
+
+                // Push to connected client in real-time
+                self.push_signal_to_subscribers(std::slice::from_ref(&sub.session_id), &delivery).await;
+                delivered_count += 1;
             }
         }
 
         let response = PublishResponse::new(
             message_id,
-            route_result.subscription_count as u32,
+            delivered_count,
             0, // queued_for - would need to track webhook deliveries separately
         );
 
@@ -650,6 +692,7 @@ where
             delivery_tracker: Arc::clone(&self.delivery_tracker),
             session_manager: Arc::clone(&self.session_manager),
             shutdown_tx: self.shutdown_tx.clone(),
+            connections: Arc::clone(&self.connections),
         }
     }
 }
@@ -680,6 +723,12 @@ impl WebSocketConnection {
         if let Ok(mut sid) = self.session_id.try_lock() {
             *sid = Some(id.to_string());
         }
+    }
+
+    /// Returns a clone of the signal sender channel.
+    /// Used to register the connection for signal delivery.
+    pub fn signal_sender(&self) -> mpsc::Sender<SignalDelivery> {
+        self.signal_tx.clone()
     }
 
     /// Send a JSON-RPC message.

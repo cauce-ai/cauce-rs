@@ -179,6 +179,7 @@ impl SubscriptionManager for InMemorySubscriptionManager {
         let info = SubscriptionInfo::new(
             subscription_id.clone(),
             client_id,
+            session_id,
             topics.clone(),
             status,
             transport,
@@ -187,7 +188,7 @@ impl SubscriptionManager for InMemorySubscriptionManager {
         // Store the subscription
         let stored = StoredSubscription {
             info: info.clone(),
-            session_id: session_id.to_string(),
+            session_id: info.session_id.clone(),
             restrictions: None,
             denial_reason: None,
             revocation_reason: None,

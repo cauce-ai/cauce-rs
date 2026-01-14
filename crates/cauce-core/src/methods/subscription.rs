@@ -253,6 +253,9 @@ pub struct SubscriptionInfo {
     /// Client that owns this subscription
     pub client_id: String,
 
+    /// Session ID for this subscription's connection
+    pub session_id: String,
+
     /// Topics this subscription covers
     pub topics: Vec<String>,
 
@@ -275,6 +278,7 @@ impl SubscriptionInfo {
     pub fn new(
         subscription_id: impl Into<String>,
         client_id: impl Into<String>,
+        session_id: impl Into<String>,
         topics: Vec<String>,
         status: SubscriptionStatus,
         transport: Transport,
@@ -282,6 +286,7 @@ impl SubscriptionInfo {
         Self {
             subscription_id: subscription_id.into(),
             client_id: client_id.into(),
+            session_id: session_id.into(),
             topics,
             status,
             transport,
@@ -469,6 +474,7 @@ mod tests {
         let info = SubscriptionInfo::new(
             "sub_1",
             "client_1",
+            "sess_1",
             vec!["topic.*".to_string()],
             SubscriptionStatus::Active,
             Transport::WebSocket,
@@ -484,6 +490,7 @@ mod tests {
         let info = SubscriptionInfo::new(
             "sub_info",
             "client_info",
+            "sess_info",
             vec!["signal.**".to_string()],
             SubscriptionStatus::Active,
             Transport::Sse,
@@ -491,6 +498,7 @@ mod tests {
 
         assert_eq!(info.subscription_id, "sub_info");
         assert_eq!(info.client_id, "client_info");
+        assert_eq!(info.session_id, "sess_info");
         assert_eq!(info.status, SubscriptionStatus::Active);
         assert_eq!(info.transport, Transport::Sse);
     }
@@ -500,6 +508,7 @@ mod tests {
         let info = SubscriptionInfo {
             subscription_id: "sub_rt".to_string(),
             client_id: "client_rt".to_string(),
+            session_id: "sess_rt".to_string(),
             topics: vec!["topic.a".to_string()],
             status: SubscriptionStatus::Pending,
             transport: Transport::Webhook,
